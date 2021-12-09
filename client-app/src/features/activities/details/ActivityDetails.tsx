@@ -32,13 +32,13 @@ export default function ActivityDetails({
           <Button
             onClick={() => openForm(activity.id)}
             basic
-            color="yellow"
+            color="grey"
             content="Edit"
           />
           <Button
             onClick={cancelSelectActivity}
             basic
-            color="grey"
+            color="red"
             content="Cancel"
           />
         </Button.Group>

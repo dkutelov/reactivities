@@ -22,7 +22,7 @@ export default function NavBar({ openForm }: Props) {
           <Menu.Item>
             <Button
               onClick={openForm}
-              style={{ backgroundColor: "#FF1493", color: "#fff" }}
+              style={{ backgroundColor: "#F43B86", color: "#fff" }}
               content="Create Activity"
             />
           </Menu.Item>
