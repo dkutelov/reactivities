@@ -1,5 +1,4 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { v4 as uuid } from "uuid";
 
 import agent from "../api/agent";
 import { Activity } from "../models/Activity";
@@ -22,14 +21,15 @@ export default class ActivityStore {
     );
   }
 
+  // Read
+
   loadActivities = async () => {
     this.setInitialLoading(true);
 
     try {
       const activities = await agent.Activities.list();
       activities.forEach((x) => {
-        x.date = x.date.split("T")[0];
-        this.activityRegistry.set(x.id, x);
+        this.setActivity(x);
       });
       this.setInitialLoading(false);
     } catch (err) {
@@ -38,31 +38,34 @@ export default class ActivityStore {
     }
   };
 
-  setInitialLoading = (state: boolean) => {
-    this.initialLoading = state;
+  loadActivity = async (id: string) => {
+    let activity = this.getActivity(id);
+
+    if (activity) {
+      this.selectedActivity = activity;
+      return activity;
+    } else {
+      this.initialLoading = true;
+      try {
+        activity = await agent.Activities.details(id);
+        this.setActivity(activity);
+        runInAction(() => {
+          this.selectedActivity = activity;
+        });
+        this.setInitialLoading(false);
+        return activity;
+      } catch (error) {
+        console.log(error);
+        this.setInitialLoading(false);
+      }
+    }
   };
 
-  selectActivity = (id: string) => {
-    //this.selectedActivity = this.activities.find((x) => x.id === id);
-    this.selectedActivity = this.activityRegistry.get(id);
-  };
-
-  cancelSelectActivity = () => {
-    this.selectedActivity = undefined;
-  };
-
-  openForm = (id?: string) => {
-    id ? this.selectActivity(id) : this.cancelSelectActivity();
-    this.editMode = true;
-  };
-
-  closeForm = () => {
-    this.editMode = false;
-  };
+  // Create
 
   createActivity = async (activity: Activity) => {
     this.loading = true;
-    activity.id = uuid();
+    //activity.id = uuid();
     try {
       await agent.Activities.create(activity);
       runInAction(() => {
@@ -78,6 +81,8 @@ export default class ActivityStore {
       });
     }
   };
+
+  // Update
 
   updateActivity = async (activity: Activity) => {
     this.loading = true;
@@ -101,6 +106,8 @@ export default class ActivityStore {
     }
   };
 
+  // Delete
+
   deleteActivity = async (id: string) => {
     this.loading = true;
     try {
@@ -108,7 +115,6 @@ export default class ActivityStore {
       runInAction(() => {
         //this.activities = this.activities.filter((x) => x.id !== id);
         this.activityRegistry.delete(id);
-        if (this.selectedActivity?.id === id) this.cancelSelectActivity();
         this.loading = false;
       });
     } catch (error) {
@@ -117,5 +123,20 @@ export default class ActivityStore {
         this.loading = false;
       });
     }
+  };
+
+  // Helpers
+
+  private getActivity = (id: string) => {
+    return this.activityRegistry.get(id); //returns activity or undefined
+  };
+
+  private setActivity = (activity: Activity) => {
+    activity.date = activity.date.split("T")[0];
+    this.activityRegistry.set(activity.id, activity);
+  };
+
+  setInitialLoading = (state: boolean) => {
+    this.initialLoading = state;
   };
 }
