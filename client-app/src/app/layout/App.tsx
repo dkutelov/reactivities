@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Switch, Route, useLocation } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import { Container } from "semantic-ui-react";
 
@@ -8,41 +8,41 @@ import ActivityDashboard from "../../features/activities/dashboard/ActivityDashb
 import HomePage from "../../features/home/HomePage";
 import ActivityForm from "../../features/activities/form/ActivityForm";
 import ActivityDetails from "../../features/activities/details/ActivityDetails";
+import TestErrors from "../../features/errors/TestError";
+import { ToastContainer } from "react-toastify";
+import NotFound from "../../features/errors/NotFound";
+import ServerError from "../../features/errors/ServerError";
 
 function App() {
+  const location = useLocation();
   return (
     <>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/activities/*" element={<Activities />} />
-      </Routes>
+      <ToastContainer position="bottom-right" hideProgressBar />
+      <Route path="/" exact component={HomePage} />
+      <Route
+        path={"/(.+)"}
+        render={() => (
+          <>
+            <NavBar />
+            <Container style={{ marginTop: "7em" }}>
+              <Switch>
+                <Route exact path="/activities" component={ActivityDashboard} />
+                <Route path="/activities/:id" component={ActivityDetails} />
+                <Route
+                  key={location.key}
+                  path={["/create-activity", "/manage/:id"]}
+                  component={ActivityForm}
+                />
+                <Route path="/errors" component={TestErrors} />
+                <Route path="/server-error" component={ServerError} />
+                <Route component={NotFound} />
+              </Switch>
+            </Container>
+          </>
+        )}
+      />
     </>
   );
-
-  function Activities() {
-    // different key will re-render ActivityForm to clear of fill data according to route
-    const location = useLocation();
-
-    return (
-      <>
-        <NavBar />
-        <Container style={{ marginTop: "7em" }}>
-          <Routes>
-            <Route path="/" element={<ActivityDashboard />} />
-            <Route path="/:id" element={<ActivityDetails />} />
-            <Route
-              path={"/create-activity"}
-              element={<ActivityForm key={location.key} />}
-            />
-            <Route
-              path={"/manage/:id"}
-              element={<ActivityForm key={location.key} />}
-            />
-          </Routes>
-        </Container>
-      </>
-    );
-  }
 }
 
 export default observer(App);

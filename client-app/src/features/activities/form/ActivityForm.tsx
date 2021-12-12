@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, SyntheticEvent, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import { Button, Form, Segment } from "semantic-ui-react";
 import { v4 as uuid } from "uuid";
 import { observer } from "mobx-react-lite";
@@ -17,8 +17,8 @@ export default observer(function ActivityForm() {
     loadActivity,
     loading,
   } = activityStore;
-  const { id } = useParams();
-  let navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  let history = useHistory();
 
   const [activity, setActivity] = useState({
     id: "",
@@ -52,11 +52,11 @@ export default observer(function ActivityForm() {
         id: uuid(),
       };
       createActivity(newActivity).then(() => {
-        navigate(`/activities/${newActivity.id}`);
+        history.push(`/activities/${newActivity.id}`);
       });
     } else {
       updateActivity(activity).then(() => {
-        navigate(`/activities/${activity.id}`);
+        history.push(`/activities/${activity.id}`);
       });
     }
   }

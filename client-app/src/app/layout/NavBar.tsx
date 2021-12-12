@@ -10,7 +10,7 @@ export default function NavBar() {
     <div>
       <Menu inverted fixed="top">
         <Container>
-          <Menu.Item as={NavLink} to="/">
+          <Menu.Item as={NavLink} exact to="/" header>
             <img
               src="/assets/logo.png"
               alt="logo"
@@ -19,10 +19,11 @@ export default function NavBar() {
             Reactivities
           </Menu.Item>
           <Menu.Item as={NavLink} to="/activities" name="Activities" />
+          <Menu.Item as={NavLink} to="/errors" name="Errors" />
           <Menu.Item>
             <Button
               as={NavLink}
-              to="/activities/create-activity"
+              to="/create-activity"
               style={{ backgroundColor: "#F43B86", color: "#fff" }}
               content="Create Activity"
             />
