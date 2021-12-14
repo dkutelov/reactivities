@@ -20,10 +20,11 @@ export default observer(function LoginForm() {
         <Form className="ui form" onSubmit={handleSubmit} autoComplete="off">
           <Header
             as="h2"
-            content="Login to Reactivites"
-            color="teal"
+            content="Login to Reactivities"
             textAlign="center"
+            style={{ color: "#f43b86" }}
           />
+
           <TextInput name="email" placeholder="Email" />
           <TextInput name="password" placeholder="Password" type="password" />
           <ErrorMessage
@@ -39,7 +40,7 @@ export default observer(function LoginForm() {
           />
           <Button
             loading={isSubmitting}
-            positive
+            style={{ backgroundColor: "#3D087B", color: "#fff" }}
             content="Login"
             type="submit"
             fluid

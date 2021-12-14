@@ -5,6 +5,7 @@ import { Container, Header, Segment, Image, Button } from "semantic-ui-react";
 
 import { useStore } from "../../app/stores/store";
 import LoginForm from "../users/LoginForm";
+import RegisterForm from "../users/RegisterForm";
 
 function HomePage() {
   const { userStore, modalStore } = useStore();
@@ -37,7 +38,7 @@ function HomePage() {
               Login!
             </Button>
             <Button
-              onClick={() => modalStore.openModal(<LoginForm />)}
+              onClick={() => modalStore.openModal(<RegisterForm />)}
               size="huge"
               inverted
             >
